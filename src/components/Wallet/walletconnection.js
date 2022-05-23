@@ -1,8 +1,6 @@
-import { connect } from "react-redux";
-import { getState } from "../reducer";
+import { Button, Paper, Stack, Typography } from "@mui/material";
 import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
-import Button from 'react-bootstrap/Button';
 
 const MetaConnect = () => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -21,17 +19,13 @@ const MetaConnect = () => {
       try {
         const res = await window.ethereum.request({
           method: "eth_requestAccounts",
-            
         });
-        console.log(res); // needs to be printed on front end button place 
-        await accountsChanged(res[0]);
+        await accountChange(res[0]);
       } catch (err) {
         console.error(err);
         setErrorMessage("There was a problem connecting to MetaMask");
       }
-     
-    } 
-    else {
+    } else {
       setErrorMessage("Install MetaMask");
     }
   };
@@ -57,21 +51,21 @@ const MetaConnect = () => {
   };
 
   return (
+    <Paper elevation={3} sx={{ p: 3 }}>
+      <Stack spacing={2}>
+        <Typography variant="h6"> Account: {account} </Typography>
+        <Typography variant="h6">
+          Balance: {balance} {balance ? "ETH" : null}
+        </Typography>
         <Button onClick={connectHandler}>Connect Account</Button>
+        {errorMessage ? (
+          <Typography variant="body1" color="red">
+            Error: {errorMessage}
+          </Typography>
+        ) : null}
+      </Stack>
+    </Paper>
   );
 };
 
-function mapStateToProps(state) {
-  const { web3Data, isBridgeDown, amountEntered, isWalletConnectOpen } =
-    getState(state);
-  return {
-    web3Data,
-    isBridgeDown,
-    amountEntered,
-    isWalletConnectOpen,
-  };
-}
-
-const WalletConnectButton = connect(mapStateToProps)(MetaConnect);
-
-export default WalletConnectButton;
+export default WalletCard;
